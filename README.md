@@ -62,7 +62,7 @@ Utilizamos a biblioteca Pandas para carregar o conjunto de dados, extrair as inf
 
 #### 3.2. Existe diferência nos valores das transações fraudulentas e não fraudulentas?
 
-
+```
     Fraude:
     count     492.000000
     mean      122.211321
@@ -73,7 +73,8 @@ Utilizamos a biblioteca Pandas para carregar o conjunto de dados, extrair as inf
     75%       105.890000
     max      2125.870000
     Name: Amount, dtype: float64
-    
+```
+```    
     Não Fraude:
     count    284315.000000
     mean         88.291022
@@ -84,7 +85,7 @@ Utilizamos a biblioteca Pandas para carregar o conjunto de dados, extrair as inf
     75%          77.050000
     max       25691.160000
     Name: Amount, dtype: float64
-
+```
 
 ![png](imagens/output_21_0.png)
 
@@ -220,7 +221,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
   - Solver: 'liblinear' e 'lbfgs'
   - C: '10' e '25'
 
-```python
+```
                   precision    recall  f1-score   support
     
                0       1.00      0.97      0.99     85307
@@ -247,7 +248,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
   - Max depth: '15' e '25'
   - Number estimators: '100' e '200'
 
-```python
+```
                   precision    recall  f1-score   support
     
                0       1.00      1.00      1.00     85307
@@ -274,7 +275,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
   - Max depth: '15' e '25'
   - Number estimators: '100' e '200'
 
-```python
+```
                   precision    recall  f1-score   support
     
                0       1.00      1.00      1.00     85307
@@ -300,7 +301,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
   - Max depth: '15' e '25'
   - Number estimators: '100' e '200'
 
-```python
+```
                   precision    recall  f1-score   support
     
                0       1.00      1.00      1.00     85307
@@ -324,7 +325,6 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 ### 7. Métricas
 
 #### 7.1. ROC AUC
-
     Métrica ROC AUC:
     Logistic Regression:           94.98%
     Gradient Boosting Classifier:  93.72%
@@ -337,7 +337,6 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 - Dessa forma, não podemos selecionar nenhum algoritmo utilizando métrica ROC AUC.
 
 #### 7.2. Precision
-
     Métrica Precisão (Precision):
     Logistic Regression:           5.21%
     Gradient Boosting Classifier:  68.39%
@@ -349,7 +348,6 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 - O algorítmo Random Forest teve uma performace superior aos demais algorítmos analisando a métrica de Precisão.
 
 #### 7.3. Recall
-
     Métrica Revocação (Recall):
     Logistic Regression:           92.65%
     Gradient Boosting Classifier:  87.5%
@@ -362,7 +360,6 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 - Entretanto, a diferênca é inferior a 3%.
 
 #### 7.4. F1-Score
-
     Métrica F1-Score:
     Logistic Regression:           9.87%
     Gradient Boosting Classifier:  76.8%

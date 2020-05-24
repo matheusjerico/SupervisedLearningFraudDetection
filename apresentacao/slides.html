@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Trabalho Final - Aprendizagem Não Supervisionada" />
+  <title>Detecção de Fraudes em Cartão de Crédito com Auto Encoder</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
+  <script src="https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Detecção de Fraudes em Cartão de Crédito com Auto Encoder</h1>
+  <p class="author">
+Trabalho Final - Aprendizagem Não Supervisionada
+  </p>
+  <p class="date">Matheus Jericó Palhares - 26 Maio 2020</p>
+</div>
+<div id="sumário" class="slide section level1">
+<h1>Sumário</h1>
+<ol style="list-style-type: decimal">
+<li>Conjunto de Dados</li>
+<li>Bibliotecas</li>
+<li>Leitura dos Dados</li>
+<li>Análise Exploratória</li>
+<li>Processamento dos Dados</li>
+<li>SMOTE (Balanceamento dos Dados)</li>
+<li>Machine Learning</li>
+<li>Métricas</li>
+<li>Conclusão</li>
+</ol>
+</div>
+<div class="slide section level1">
+
+<h3 id="conjunto-de-dados">1. Conjunto de Dados</h3>
+<p><a href="https://www.kaggle.com/mlg-ulb/creditcardfraud">Credit Card Fraud Detection</a></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h4 id="contexto">1.1. Contexto</h4>
+<p>É de extrema importância que as empresas identifiquem e reconheçam transações fraudulentas com cartão de crédito, para que os cliente não sejam cobrados pelos itens que não compraram e, as empresas não tomem prejuízo devido a fraude (Kaggle, 2020).</p>
+</div><div class="column" style="width:50%;">
+<h4 id="conteúdo">1.2. Conteúdo</h4>
+<p>O dataset contém transações realizadas com cartões de crédito em setembro de 2013 por portadores de cartões europeus. Este conjunto de dados apresenta transações que ocorreram em dois dias, nas quais temos 492 fraudes em 284.807 transações. O conjunto de dados é altamente desequilibrado, a classe positiva (fraudes) representa 0,172% de todas as transações (Kaggle, 2020).<br></p>
+</div>
+</div>
+</div>
+<div class="slide section level1">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<h4 id="conteúdo-1">1.2. Conteúdo</h4>
+<p>O dataset contém apenas variáveis de entrada numéricas que são o resultado de uma transformação PCA (problemas de confidencialidade. Features de V1, V2, até V28 são os principais componentes obtidos com o PCA, os únicos recursos que não foram transformados com o PCA são ‘Tempo’ e ‘Valor’. O recurso ‘Classe’ é a variável de resposta e assume o valor 1 em caso de fraude e 0 em caso contrário (Kaggle, 2020).</p>
+</div><div class="column" style="width:50%;">
+<h4 id="resolução">1.3. Resolução</h4>
+<p>Para resolução do problema, utilizaremos algoritmos de aprendizagem supervisionada. Como o dataset é desbalanceado, mostraremos uma solução de balanceamento (Kaggle, 2020).</p>
+<p>Utilizamos o framework Scikit-learn para construção dos algorítmos de aprendizagem supervisionada.</p>
+</div>
+</div>
+</div>
+<div class="slide section level1">
+
+<h3 id="bibliotecas">2. Bibliotecas</h3>
+<ul>
+<li><strong>Pandas</strong>: Importar o dataset e realizar manipulações com dataframe.</li>
+<li><strong>Numpy</strong>: Manipular conjunto de dados e trabalhar com métodos matemáticos.</li>
+<li><strong>Matplotlib</strong> e <strong>Seaborn</strong>: Construção e visualização gráfica.</li>
+<li><strong>Scikit-learn</strong>: Aplicar técnicas de normalização e padronização dos dados. Dividir os dados em treinamento, validação e teste. Calcular das métricas de validação dos algorítmos. Criar e treinar modelos de aprendizagem supervisionada.</li>
+<li><strong>XGBoost</strong>: Criar e treinar o algorítmo GXBoosting.</li>
+<li><strong>Imblearn</strong>: Balancear o dataset.</li>
+<li><strong>Pandas Profiling</strong>: Análise gráfica.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h3 id="leitura-dos-dados">3. Leitura dos Dados:</h3>
+<ul>
+<li>Dataset não possui valores NaN;</li>
+<li>28 colunas resultantes da técnica de redução de dimensionalidade PCA;</li>
+<li>1 coluna referente ao valor da transação;</li>
+<li>Class é a coluna target;</li>
+<li>Todos os dados presentes no dataset são dados numéricos.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h3 id="análise-exploratória">4. Análise Exploratória</h3>
+<h4 id="distribuição-dos-dados-com-base-na-classe">4.1. Distribuição dos Dados com base na Classe</h4>
+<pre><code>Distribuição das classificações dos dados:
+Transações Não Fraudulentas: 99.83%.
+Transações Fraudulentas: 0.17%.</code></pre>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img src="imagens/output_17_0.png" style="width:80.0%;height:80.0%" /></p>
+</div><div class="column" style="width:50%;">
+<div>
+<p><strong>Análise</strong>: <br></p>
+<ul class="incremental">
+<li>O dataset é desbalanceado. A maior parte dos dados são representados por transações não fraudulentas.</li>
+<li>Quando os dados são desbalanceados, temos que utilizar métricas como Recall, Precision e F1-Score para análisar o desempenho do algoritmo.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide section level1">
+
+<h4 id="existe-diferência-nos-valores-das-transações-fraudulentas-e-não-fraudulentas">4.2. Existe diferência nos valores das transações fraudulentas e não fraudulentas?</h4>
+<pre><code>Fraude:                                     Não Fraude:
+count     492.000000                        count     284315.000000    
+mean      122.211321                        mean          88.291022
+std       256.683288                        std          250.105092
+min         0.000000                        min            0.000000
+25%         1.000000                        25%            5.650000
+50%         9.250000                        50%           22.000000
+75%       105.890000                        75%           77.050000
+max      2125.870000                        max        25691.160000
+Name: Amount, dtype: float64                Name: Amount, dtype: float64</code></pre>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img src="imagens/output_21_0.png" /></p>
+</div><div class="column" style="width:50%;">
+<p><strong>Análise</strong>: <br></p>
+<ul>
+<li>As transações não fraudulentas possui um range de valores muito maior.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="slide section level1">
+
+<h4 id="distribuição-das-transações">4.3. Distribuição das Transações</h4>
+<p><img src="imagens/output_24_0.png" /></p>
+<p><strong>Análise</strong>:<br></p>
+<ul>
+<li>75% dos dados são transações com valores inferiores a 100 euros;</li>
+<li>A Sanzonalidade é devido ao período de aquisição dos dados (2 dias).</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h4 id="correlação-entre-as-variáveis">4.4. Correlação entre as variáveis</h4>
+<p><img src="imagens/output_28_0.png" style="width:100.0%;height:60.0%" /></p>
+</div>
+<div class="slide section level1">
+
+<h4 id="feature-importance">4.5. Feature Importance</h4>
+<p>Para analisar as features mais relevantes para detecção de Fraude, utilizamos dois algoritmos do método Ensemble.</p>
+<p><img src="imagens/output_43_1.png" style="width:80.0%;height:80.0%" /></p>
+<p>Entre os dois algoritmos, tivemos pouca divergência. Entretando, considerei o resultado das features mais importantes do algoritmo <strong>Random Forest</strong>, pois o mesmo pondera mais variáveis para tomada de decisão.</p>
+</div>
+<div class="slide section level1">
+
+<h3 id="processamento-dos-dados">5. Processamento dos dados</h3>
+<h4 id="removendo-as-features-com-menor-importância">5.1. Removendo as Features com Menor Importância</h4>
+<p>Após analisar a análise de <em>feature importance</em>, removemos as 5 features com menor importância para redução na quantidade de dados.</p>
+<pre><code>Features com menor importância: [&#39;V23&#39;, &#39;V25&#39;, &#39;V13&#39;, &#39;V22&#39;, &#39;V24&#39;]</code></pre>
+<h4 id="padronização-e-normalização">5.2. Padronização e Normalização</h4>
+<ul>
+<li>Utilizamos a biblioteca Standard Scaler do scikit-learn para padronizar as feature <em>Amount</em>, pois a mesma possui uma gama de valores;</li>
+<li>O objetivo de padronizar a features é fazer com que os valores possuam média 0 e devio padrão igual a 1;</li>
+<li>Transformando a distribuição da features em uma distribuição normal;</li>
+<li>Aplicamos a técnica Min Max Scaler na feature <em>Time</em> para reguzir a gama de valores, em um range pequeno (0,1).</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h3 id="smote-oversampling">6. SMOTE Oversampling</h3>
+<ul>
+<li>A técnica de balanceamento SMOTE utiliza o algoritmo Knn para inserir novos dados;</li>
+<li>Como o dataset é muito desbalanceado, o modelo se torna enviesado para a classe (não fraudulenta) que tem a maior quantidade de dados;</li>
+<li>Dessa forma, aplicamos a técnica de oversampling nos dados de treino, sem manipular os dados de teste:
+<ul>
+<li>Isso faz com que o treinamento do modelo seja com duas classes balanceadas, fazendo com que o modelo não fique enviesado;</li>
+<li>Os dados de testes seguem os dados originais desbalanceados.</li>
+</ul></li>
+</ul>
+<h4 id="separando-dados-de-treino-e-teste">6.1. Separando dados de treino e teste</h4>
+<ul>
+<li>Aplicamos a técnica de rebalanceamento do dataset apenas nos dados de treino;</li>
+<li>Não aplicamos a técnica nos dados de teste pois diverge da realidade;</li>
+<li>Aplicar a técnica nos dados de treino é ideal para não termos um modelo enviesado.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h4 id="comparando-a-distribuição-das-classes-dos-dados-de-treino">6.2. Comparando a distribuição das classes dos dados de treino</h4>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h5 id="dados-de-treino-desbalanceados">6.2.1. Dados de treino desbalanceados</h5>
+<p><img src="imagens/output_59_0.png" /></p>
+</div><div class="column" style="width:50%;">
+<h5 id="dados-de-treino-balanceados">6.2.2. Dados de treino balanceados</h5>
+<p><img src="imagens/output_61_0.png" /></p>
+</div>
+</div>
+</div>
+<div class="slide section level1">
+
+<h3 id="machine-learning">7. Machine Learning</h3>
+<h4 id="métodos-ensemble">7.1 Métodos Ensemble</h4>
+<p><img width="800" height="420" src="https://www.globalsoftwaresupport.com/wp-content/uploads/2018/02/ggff5544hh.png" /></p>
+<p>Fonte: Global Software</p>
+</div>
+<div class="slide section level1">
+
+<h5 id="bagging-random-forest">7.1.1. Bagging (Random Forest)</h5>
+<p>No Bagging os classificadores são treinados de forma independente por diferentes conjuntos de treinamento através do método de inicialização. Para construí-los é necessário montar k conjuntos de treinamento idênticos e replicar esses dados de treinamento de forma aleatória para construir k redes independentes por re-amostragem com reposição. Em seguida, deve-se agregar as k redes através de um método de combinação apropriada, tal como a maioria de votos (Maisa Aniceto, 2017).</p>
+<h5 id="boosting-xgboost">7.1.2. Boosting (XGBoost)</h5>
+<p>No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usando um conjunto de treinamento diferente. A principal diferença em relação ao Bagging é que os conjuntos de dados re-amostrados são construídos especificamente para gerar aprendizados complementares e a importância do voto é ponderado com base no desempenho de cada modelo, em vez da atribuição de mesmo peso para todos os votos. Essencialmente, esse procedimento permite aumentar o desempenho de um limiar arbitrário simplesmente adicionando learners mais fracos (Maisa Aniceto, 2017). Dada a utilidade desse achado, Boosting é considerado uma das descobertas mais significativas em aprendizado de máquina (LANTZ, 2013).</p>
+</div>
+<div class="slide section level1">
+
+<h4 id="seleção-de-algorítmos-utilizando-validação-cruzada">7.2. Seleção de Algorítmos utilizando Validação Cruzada</h4>
+<p>Comparamos o desempenho dos Algorítmos: <em>Logistic Regression, Naive Bayes, Decision Tree, Random Forest, XGBoosting, Gradient Boosting</em>.</p>
+<pre><code>Nome do Modelo                | Acurácia Média  | Desvio Padrão
+Logistic Regression:                 94.28%          0.03%
+Naive Bayes:                         90.11%          0.06%
+Decision Tree:                       99.7%           0.02%
+Random Forest:                       99.98%          0.0%
+XGB Classifier:                      99.95%          0.0%
+Gradient Boosting Classifier:        97.56%          0.04%
+SVM:                                 97.19%          0.04%</code></pre>
+<p><strong>Análise</strong>:<br></p>
+<ul>
+<li>Selecionei os seguintes modelos:
+<ul>
+<li>Gradient Boosting Classifier;</li>
+<li>Random Forest;</li>
+<li>XGB Classifier;</li>
+<li>Logistic Regression.</li>
+</ul></li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h4 id="gridsearch-e-validação">7.3. GridSearch e Validação</h4>
+<ul>
+<li>Utilizamos a métrica F1-Score para otimizar os hiperparâmetros dos Algorítmos de Aprendizagem Supervisionada.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h5 id="logistic-regression">7.3.1. Logistic Regression</h5>
+<p>Parâmetros escolhidos para tunning:<br></p>
+<ul>
+<li>Solver: ‘liblinear’ e ‘lbfgs’;</li>
+<li>C: ‘10’ e ‘25’.</li>
+</ul>
+<pre><code>              precision    recall  f1-score   support
+
+           0       1.00      0.97      0.99     85307
+           1       0.05      0.93      0.10       136
+
+    accuracy                           0.97     85443
+   macro avg       0.53      0.95      0.54     85443
+weighted avg       1.00      0.97      0.98     85443
+
+------------------------------------------------------
+Matriz de Confusão:
+ [83016  2291]
+ [   10   126]
+------------------------------------------------------
+Logistic Regression f1-score: 0.09870740305522914</code></pre>
+</div>
+<div class="slide section level1">
+
+<h5 id="gradient-boosting-classifier">7.3.2 Gradient Boosting Classifier</h5>
+<p>Parâmetros escolhidos para tunning:<br></p>
+<ul>
+<li>Learning Rate: ‘0.01’ e ‘0.15’;</li>
+<li>Max depth: ‘15’ e ‘25’;</li>
+<li>Number estimators: ‘100’ e ‘200’.</li>
+</ul>
+<pre><code>              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.68      0.88      0.77       136
+
+    accuracy                           1.00     85443
+   macro avg       0.84      0.94      0.88     85443
+weighted avg       1.00      1.00      1.00     85443
+
+------------------------------------------------------
+Matriz de Confusão:
+ [85252    55]
+ [   17   119]
+------------------------------------------------------
+GradientBoostingClassifier f1-score: 0.767741935483871</code></pre>
+</div>
+<div class="slide section level1">
+
+<h5 id="xgb-classifier">7.3.3. XGB Classifier</h5>
+<p>Parâmetros escolhidos para tunning:<br></p>
+<ul>
+<li>Learning Rate: ‘0.01’ e ‘0.15’;</li>
+<li>Max depth: ‘15’ e ‘25’;</li>
+<li>Number estimators: ‘100’ e ‘200’.</li>
+</ul>
+<pre><code>              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.73      0.88      0.80       136
+
+    accuracy                           1.00     85443
+   macro avg       0.86      0.94      0.90     85443
+weighted avg       1.00      1.00      1.00     85443
+
+------------------------------------------------------
+Matriz de Confusão
+ [85262    45]
+ [   16   120]
+------------------------------------------------------
+XGBClassifier f1-score: 0.7973421926910299</code></pre>
+</div>
+<div class="slide section level1">
+
+<h5 id="random-forest-classifier">7.3.4 Random Forest Classifier</h5>
+<p>Parâmetros escolhidos para tunning:<br></p>
+<ul>
+<li>Max depth: ‘15’ e ‘25’;</li>
+<li>Number estimators: ‘100’ e ‘200’.</li>
+</ul>
+<pre><code>              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     85307
+           1       0.76      0.90      0.82       136
+
+    accuracy                           1.00     85443
+   macro avg       0.88      0.95      0.91     85443
+weighted avg       1.00      1.00      1.00     85443
+
+------------------------------------------------------
+Matriz de Confusão
+ [85268    39]
+ [   14   122]
+------------------------------------------------------
+RandomForestClassifier f1-score: 0.8215488215488216</code></pre>
+</div>
+<div class="slide section level1">
+
+<h3 id="métricas">8. Métricas</h3>
+<h4 id="roc-auc">8.1. ROC AUC</h4>
+<pre><code>Métrica ROC AUC:
+Logistic Regression:           94.98%
+Gradient Boosting Classifier:  93.72%
+XGB Classifier:                94.1%
+Random Forest Classifier:      94.8%</code></pre>
+<p><strong>Análise</strong>: <br></p>
+<ul>
+<li>Analisando a métrica de ROC AUC, os quatro Algorítmos tiverem resultados semelhantes;</li>
+<li>Dessa forma, não podemos selecionar nenhum dos Algorítmos utilizando a métrica ROC AUC.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h4 id="precision">8.2. Precision</h4>
+<pre><code>Métrica Precisão (Precision):
+Logistic Regression:           5.21%
+Gradient Boosting Classifier:  68.39%
+XGB Classifier:                72.7%
+Random Forest Classifier:      75.78%</code></pre>
+<p><strong>Análise</strong>: <br></p>
+<ul>
+<li>Analisando a métrica de Precisão, os Algotítmos do Método Ensemble tiveram um desempenho muito superior em relação a Regressão Logísitica;</li>
+<li>O algorítmo Random Forest obteve performace superior aos demais algorítmos.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h4 id="recall">8.3. Recall</h4>
+<pre><code>Métrica Revocação (Recall):
+Logistic Regression:           92.65%
+Gradient Boosting Classifier:  87.5%
+XGB Classifier:                88.2%
+Random Forest Classifier:      89.7%</code></pre>
+<p><strong>Análise</strong>: <br></p>
+<ul>
+<li>Analisando a métrica de Revocação, o Algorítmo de Regressão Logística teve o melhor desempenho.</li>
+<li>Entretanto, a diferênca entre a performace da Regressão Logística e Random Forest é inferior a 3%.</li>
+<li>Recall é uma das métricas mais importantes para Detecção de Fraude, pois o objetivo é minimizar o Falso Negativo.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h4 id="f1-score">8.4. F1-Score</h4>
+<pre><code>Métrica F1-Score:
+Logistic Regression:           9.87%
+Gradient Boosting Classifier:  76.8%
+XGB Classifier:                79.7%
+Random Forest Classifier:      82.15%</code></pre>
+<p><strong>Análise</strong>: <br></p>
+<ul>
+<li>Analisando a métrica de F1-Score, que é uma métrica que pondera a revocação e a precisão, o Algorítmo Random Forest teve o melhor desempenho.</li>
+<li>A métrica F1-Score é uma das mais importante quando temos um dataset desbalanceado.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<h4 id="matriz-de-confusão-random-forest">8.5. Matriz de Confusão (Random Forest)</h4>
+<p>Vamos analisar a matriz de confusão do algoritmo que obteve melhor desempenho.</p>
+<p><img src="imagens/output_99_1.png" /></p>
+</div>
+<div class="slide section level1">
+
+<h3 id="conclusão">9. CONCLUSÃO</h3>
+<ul>
+<li>Após aplicar algorítmos de Aprendizagem Supervisionada (Regressão Logística e Métodos Ensemble), podemos concluir que os métodos Ensemble são indicados para casos que temos dados desbalanceados. No problema apresentado, detecção de fraude utilizando cartão de crédito, o algorítmo Random Forest teve a melhor performace analisando a métrica de F1-Score.</li>
+<li>Os Algorítmos de Aprendizagem Supervisionada apresentam ótimo desempenho para Análise de Fraude, pelo fator de aprender o que são transações fraudulentas e transações não fraudulentas. Entretanto é necessário aplicar técnicas de balanceamentos dos dados de Treino para que o modelo não fica viesado.</li>
+<li>Os algorítmos de Aprendizagem Não-Supervionada são indicados para os casos que não temos os rótulos das transações Fraudulentas, mas temos os dados das transações normais. Um dos Algorítmos mais indicados para essa problemática é o <a href="https://github.com/matheusjerico/AutoEncoderFraudDetection">Auto Encoder</a>.</li>
+</ul>
+</div>
+</body>
+</html>

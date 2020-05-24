@@ -132,20 +132,20 @@ Utilizamos a biblioteca Pandas para carregar o conjunto de dados, extrair as inf
     
 Entre os dois algoritmos, tivemos pouca divergência. Entretando, considerei o resultado das features mais importantes do algoritmo **Random Forest**, pois o mesmo pondera mais variáveis para tomada de decisão.
 
-## 4. Processamento dos dados
+### 4. Processamento dos dados
 
-### 4.1. Removendo as features com menor relevância
+#### 4.1. Removendo as features com menor relevância
 - Após analisar a análise de *feature importance*, removemos as 5 features com menor importância para redução na quantidade de dados.
 ```
     Features com menor importância: ['V23', 'V25', 'V13', 'V22', 'V24']
 ```
 
-### 4.2. Aplicando padronização e normalização nos dados com larga escala
+#### 4.2. Aplicando padronização e normalização nos dados com larga escala
 - Aplicamos a técnica pois a feature apresenta uma gama grande de valores. Utilizamos a biblioteca Standard Scaler do scikit-learn para padronizar as feature *Amount*. A ideia de utilizar essa transformação é fazer com que os valores da feature possua média 0 e devio padrão igual a 1. Transformando a distribuição da features em uma distribuição normal.
 - Aplicamos a técnica MinMax Scaler na feature *Time* para reguzir a gama de valores, em um range pequeno.
 
 
-## 5. SMOTE Oversampling & Machine Learning¶
+### 5. SMOTE Oversampling & Machine Learning¶
 
 - Aplicando a técnica de SMOTE Oversampling para rebalancear o dataset;
 - Como o dataset é muito desbalanceado, o modelo se torna enviesado para a classe (não fraudulenta) que tem a maior quantidade de dados;
@@ -154,39 +154,39 @@ Entre os dois algoritmos, tivemos pouca divergência. Entretando, considerei o r
     - Os dados de testes seguem os dados originais desbalanceados.
 
 
-### 5.1. Separando dados de treino e teste
+#### 5.1. Separando dados de treino e teste
 **ANÁLISE**:
 - Aplicamos a técnica de rebalanceamento do dataset apenas nos dados de treino;
 - Não aplicamos a técnica nos dados de teste pois diverge da realidade;
 - Aplicar a técnica nos dados de treino é ideal para não termos um modelo enviesado.
 
-### 5.2. Comparando a distribuição das classes dos dados de treino
+#### 5.2. Comparando a distribuição das classes dos dados de treino
 
-#### 5.2.1. Dados de treino desbalanceados
+##### 5.2.1. Dados de treino desbalanceados
 
 ![png](imagens/output_59_0.png)
 
 
-#### 5.2.2. Dados de treino balanceados
+##### 5.2.2. Dados de treino balanceados
 
 ![png](imagens/output_61_0.png)
 
 
-## 6. ITS TIME!! Machine Learning
+### 6. ITS TIME!! Machine Learning
 
-### 6.1 Métodos Ensemble
+#### 6.1 Métodos Ensemble
 <img width="512" height="312" src="https://www.globalsoftwaresupport.com/wp-content/uploads/2018/02/ggff5544hh.png" />
 Fonte: Global Software
 
-#### 6.1.1. Bagging (Random Forest)
+##### 6.1.1. Bagging (Random Forest)
 
 No Bagging os classificadores são treinados de forma independente por diferentes conjuntos de treinamento através do método de inicialização. Para construí-los é necessário montar k conjuntos de treinamento idênticos e replicar esses dados de treinamento de forma aleatória para construir k redes independentes por re-amostragem com reposição. Em seguida, deve-se agregar as k redes através de um método de combinação apropriada, tal como a maioria de votos (Maisa Aniceto, 2017).
 
-#### 6.1.2. Boosting
+##### 6.1.2. Boosting
 
 No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usando um conjunto de treinamento diferente. A principal diferença em relação ao Bagging é que os conjuntos de dados re-amostrados são construídos especificamente para gerar aprendizados complementares e a importância do voto é ponderado com base no desempenho de cada modelo, em vez da atribuição de mesmo peso para todos os votos. Essencialmente, esse procedimento permite aumentar o desempenho de um limiar arbitrário simplesmente adicionando learners mais fracos (Maisa Aniceto, 2017). Dada a utilidade desse achado, Boosting é considerado uma das descobertas mais significativas em aprendizado de máquina (LANTZ, 2013).
 
-### 6.2. Comparando acurácia de 7 modelos de classificação utilizando validação cruzada
+#### 6.2. Comparando acurácia de 7 modelos de classificação utilizando validação cruzada
 - Será selecionado 4 modelos para tunning de hiperparâmetros;
 - Posteriormente, será selecionado o modelo que obter as melhores métricas.
 ```
@@ -209,13 +209,13 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
   - Não foi escolhido o algorítmo Decision Tree, pois o Random Forest é uma versão melhorada do Decision Tree, pois utiliza varias arvores de decisão para ponderar a classe escolhida como resultado final.
 
 
-### 6.3. Aplicando GridSearch para tunning e Validando com os dados de teste
+#### 6.3. Aplicando GridSearch para tunning e Validando com os dados de teste
 - A métrica escolhida para otimizar os hiperparâmetros foi a F1-Score, tendo em vista que o dataset é desbalanceado.
 - Logo, a métrica escolhida para selecionar o melhor modelo foi a F1-Score, pelo fato do dataset ser desbalanceado.
 
 
 
-#### 6.3.1. Logistic Regression
+##### 6.3.1. Logistic Regression
 - Parâmetros escolhidos para tunning:
   - Solver: 'liblinear' e 'lbfgs'
   - C: '10' e '25'
@@ -241,7 +241,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
     Melhores parâmetros para o algorítmo Logistic Regression: {'C': 10, 'penalty': 'l2', 'solver': 'liblinear'}
 
 
-#### 6.3.2 Gradient Boosting Classifier
+##### 6.3.2 Gradient Boosting Classifier
 - Parâmetros escolhidos para tunning:
   - Learning Rate: '0.01' e '0.15'
   - Max depth: '15' e '25'
@@ -268,7 +268,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
     Melhores parâmetros para o algorítmo Gradient Boosting: {'learning_rate': 0.15, 'max_depth': 15, 'n_estimators': 100}
 
 
-#### 6.3.3. XGB Classifier
+##### 6.3.3. XGB Classifier
 - Parâmetros escolhidos para tunning:
   - Learning Rate: '0.01' e '0.15'
   - Max depth: '15' e '25'
@@ -295,7 +295,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
     Melhores parâmetros para o algorítmo XGB: {'learning_rate': 0.15, 'max_depth': 15, 'n_estimators': 200}
 
 
-#### 6.3.4 Random Forest Classifier
+##### 6.3.4 Random Forest Classifier
 - Parâmetros escolhidos para tunning:
   - Max depth: '15' e '25'
   - Number estimators: '100' e '200'
@@ -316,17 +316,14 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
      [   14   122]
     ------------------------------------------------------
     RandomForestClassifier f1-score: 0.8215488215488216
-
-
-
 ```
 
     Melhores parâmetros para o algorítmo Random Forest: {'max_depth': 25, 'max_features': 'auto', 'n_estimators': 100}
 
 
-## 7. Métricas
+### 7. Métricas
 
-### 7.1. ROC AUC
+#### 7.1. ROC AUC
 
     Métrica ROC AUC:
     Logistic Regression:           94.98%
@@ -339,7 +336,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 - Os quatro algoritmos tiverem resultados muito próximo.
 - Dessa forma, não podemos selecionar nenhum algoritmo utilizando métrica ROC AUC.
 
-### 7.2. Precision
+#### 7.2. Precision
 
     Métrica Precisão (Precision):
     Logistic Regression:           5.21%
@@ -351,7 +348,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 **ANÁLISE**:
 - O algorítmo Random Forest teve uma performace superior aos demais algorítmos analisando a métrica de Precisão.
 
-### 7.3. Recall
+#### 7.3. Recall
 
     Métrica Revocação (Recall):
     Logistic Regression:           92.65%
@@ -364,7 +361,7 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 - O algorítmo de Regressão Logística obteve um melhor desempenho comparado aos algorítmos que utilizam métodos Ensemble;
 - Entretanto, a diferênca é inferior a 3%.
 
-### 7.4. F1-Score
+#### 7.4. F1-Score
 
     Métrica F1-Score:
     Logistic Regression:           9.87%
@@ -377,13 +374,13 @@ No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usan
 - O algorítmo Random Forest obteve o melhor desempenho analisando a métrica F1-Score.
 - A métrica F1-Score é uma das mais importante quando temos um dataset desbalanceado.
 
-## 8. Matriz de Confusão
+### 8. Matriz de Confusão
 - Vamos analisar a matriz de confusão do algoritmo que obteve melhor desempenho.
 
 ![png](imagens/output_99_1.png)
 
 
-# CONCLUSÃO
+## CONCLUSÃO
 
 **ANÁLISE**:
 - Após aplicar algorítmos de Aprendizagem Supervisionada (Regressão Logística e Métodos Ensemble), podemos concluir que os métodos Ensemble são indicados para casos que temos dados desbalanceados. No problema apresentado, detecção de fraude utilizando cartão de crédito, o algorítmo Random Forest obteve melhor performace analisando a métrica de F1-Score.

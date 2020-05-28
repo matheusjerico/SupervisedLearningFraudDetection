@@ -6,8 +6,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <meta name="author" content="Trabalho Final - Aprendizagem Não Supervisionada" />
-  <title>Detecção de Fraudes em Cartão de Crédito com Auto Encoder</title>
+  <meta name="author" content="Matheus Jericó Palhares" />
+  <title>Detecção de Fraudes em Cartão de Crédito com Aprendizado Supervisionado</title>
   <style type="text/css">
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -23,11 +23,11 @@
 </head>
 <body>
 <div class="slide titlepage">
-  <h1 class="title">Detecção de Fraudes em Cartão de Crédito com Auto Encoder</h1>
+  <h1 class="title">Detecção de Fraudes em Cartão de Crédito com Aprendizado Supervisionado</h1>
   <p class="author">
-Trabalho Final - Aprendizagem Não Supervisionada
+Matheus Jericó Palhares
   </p>
-  <p class="date">Matheus Jericó Palhares - 26 Maio 2020</p>
+  <p class="date">26 Maio 2020</p>
 </div>
 <div id="sumário" class="slide section level1">
 <h1>Sumário</h1>
@@ -47,28 +47,9 @@ Trabalho Final - Aprendizagem Não Supervisionada
 
 <h3 id="conjunto-de-dados">1. Conjunto de Dados</h3>
 <p><a href="https://www.kaggle.com/mlg-ulb/creditcardfraud">Credit Card Fraud Detection</a></p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<h4 id="contexto">1.1. Contexto</h4>
-<p>É de extrema importância que as empresas identifiquem e reconheçam transações fraudulentas com cartão de crédito, para que os cliente não sejam cobrados pelos itens que não compraram e, as empresas não tomem prejuízo devido a fraude (Kaggle, 2020).</p>
-</div><div class="column" style="width:50%;">
-<h4 id="conteúdo">1.2. Conteúdo</h4>
-<p>O dataset contém transações realizadas com cartões de crédito em setembro de 2013 por portadores de cartões europeus. Este conjunto de dados apresenta transações que ocorreram em dois dias, nas quais temos 492 fraudes em 284.807 transações. O conjunto de dados é altamente desequilibrado, a classe positiva (fraudes) representa 0,172% de todas as transações (Kaggle, 2020).<br></p>
-</div>
-</div>
-</div>
-<div class="slide section level1">
-
-<div class="columns">
-<div class="column" style="width:50%;">
-<h4 id="conteúdo-1">1.2. Conteúdo</h4>
-<p>O dataset contém apenas variáveis de entrada numéricas que são o resultado de uma transformação PCA (problemas de confidencialidade. Features de V1, V2, até V28 são os principais componentes obtidos com o PCA, os únicos recursos que não foram transformados com o PCA são ‘Tempo’ e ‘Valor’. O recurso ‘Classe’ é a variável de resposta e assume o valor 1 em caso de fraude e 0 em caso contrário (Kaggle, 2020).</p>
-</div><div class="column" style="width:50%;">
-<h4 id="resolução">1.3. Resolução</h4>
-<p>Para resolução do problema, utilizaremos algoritmos de aprendizagem supervisionada. Como o dataset é desbalanceado, mostraremos uma solução de balanceamento (Kaggle, 2020).</p>
+<h4 id="resolução">1.1. Resolução</h4>
+<p>Para resolução do problema, utilizaremos algoritmos de aprendizagem supervisionada. Como o dataset é desbalanceado, mostraremos uma solução de balanceamento.</p>
 <p>Utilizamos o framework Scikit-learn para construção dos algorítmos de aprendizagem supervisionada.</p>
-</div>
-</div>
 </div>
 <div class="slide section level1">
 
@@ -134,7 +115,7 @@ Name: Amount, dtype: float64                Name: Amount, dtype: float64</code><
 </div><div class="column" style="width:50%;">
 <p><strong>Análise</strong>: <br></p>
 <ul>
-<li>As transações não fraudulentas possui um range de valores muito maior.</li>
+<li>As transações não fraudulentas possui uma gama de valores muito maior.</li>
 </ul>
 </div>
 </div>
@@ -213,13 +194,6 @@ Name: Amount, dtype: float64                Name: Amount, dtype: float64</code><
 <h4 id="métodos-ensemble">7.1 Métodos Ensemble</h4>
 <p><img width="800" height="420" src="https://www.globalsoftwaresupport.com/wp-content/uploads/2018/02/ggff5544hh.png" /></p>
 <p>Fonte: Global Software</p>
-</div>
-<div class="slide section level1">
-
-<h5 id="bagging-random-forest">7.1.1. Bagging (Random Forest)</h5>
-<p>No Bagging os classificadores são treinados de forma independente por diferentes conjuntos de treinamento através do método de inicialização. Para construí-los é necessário montar k conjuntos de treinamento idênticos e replicar esses dados de treinamento de forma aleatória para construir k redes independentes por re-amostragem com reposição. Em seguida, deve-se agregar as k redes através de um método de combinação apropriada, tal como a maioria de votos (Maisa Aniceto, 2017).</p>
-<h5 id="boosting-xgboost">7.1.2. Boosting (XGBoost)</h5>
-<p>No Boosting, de forma semelhante ao Bagging, cada classificador é treinado usando um conjunto de treinamento diferente. A principal diferença em relação ao Bagging é que os conjuntos de dados re-amostrados são construídos especificamente para gerar aprendizados complementares e a importância do voto é ponderado com base no desempenho de cada modelo, em vez da atribuição de mesmo peso para todos os votos. Essencialmente, esse procedimento permite aumentar o desempenho de um limiar arbitrário simplesmente adicionando learners mais fracos (Maisa Aniceto, 2017). Dada a utilidade desse achado, Boosting é considerado uma das descobertas mais significativas em aprendizado de máquina (LANTZ, 2013).</p>
 </div>
 <div class="slide section level1">
 
@@ -420,6 +394,15 @@ Random Forest Classifier:      82.15%</code></pre>
 <li>Após aplicar algorítmos de Aprendizagem Supervisionada (Regressão Logística e Métodos Ensemble), podemos concluir que os métodos Ensemble são indicados para casos que temos dados desbalanceados. No problema apresentado, detecção de fraude utilizando cartão de crédito, o algorítmo Random Forest teve a melhor performace analisando a métrica de F1-Score.</li>
 <li>Os Algorítmos de Aprendizagem Supervisionada apresentam ótimo desempenho para Análise de Fraude, pelo fator de aprender o que são transações fraudulentas e transações não fraudulentas. Entretanto é necessário aplicar técnicas de balanceamentos dos dados de Treino para que o modelo não fica viesado.</li>
 <li>Os algorítmos de Aprendizagem Não-Supervionada são indicados para os casos que não temos os rótulos das transações Fraudulentas, mas temos os dados das transações normais. Um dos Algorítmos mais indicados para essa problemática é o <a href="https://github.com/matheusjerico/AutoEncoderFraudDetection">Auto Encoder</a>.</li>
+</ul>
+</div>
+<div class="slide section level1">
+
+<ul>
+<li><p>Mini Projeto Regressão Linear <br> <a href="https://github.com/matheusjerico/LinearRegressionScratch">https://github.com/matheusjerico/LinearRegressionScratch</a></p></li>
+<li><p>Mini Projeto KNN <br> <a href="https://github.com/matheusjerico/knn-scratch">https://github.com/matheusjerico/knn-scratch</a></p></li>
+<li><p>Mini Projeto ANN <br> <a href="https://github.com/matheusjerico/NeuralNetwork">https://github.com/matheusjerico/NeuralNetwork</a></p></li>
+<li><p>Projeto Fianl <br> <a href="https://github.com/matheusjerico/SupervisedLearningFraudDetection">https://github.com/matheusjerico/SupervisedLearningFraudDetection</a></p></li>
 </ul>
 </div>
 </body>

@@ -1,4 +1,4 @@
-# Trabalho Final - Não Supervisionado
+# Trabalho Final - Aprendizagem Supervisionada
 
 **Autor**: Matheus Jericó Palhares <br>
 **LinkedIn**: https://linkedin.com/in/matheusjerico
